@@ -3,6 +3,7 @@ import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import questionReducer from "./questionSlice";
 import answerReducer from './answerSlice'
+import scoreReducer from './ScoreSlice'
 import {
   persistStore,
   persistReducer,
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   users: userReducer,
   questions: questionReducer,
-  answers: answerReducer
+  answers: answerReducer,
+  score: scoreReducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Login from './Components/Login'
 import Register from './Components/Register'
 
@@ -9,9 +9,22 @@ import Questions from './UserPages/Questions'
 import {Routes, Route} from "react-router-dom" 
 import AdminUserPage from './AdminPages/AdminUserPage'
 import AdminQuestionPage from './AdminPages/AdminQuestionPage'
+import { useDispatch, useSelector } from 'react-redux'
 
+import tokenExpired from './redux/tokenExpired'
+import { refresh } from './redux/apiRequest'
 
 function App() {
+  const accessToken = useSelector(
+    (state) => state.auth.login.currentUser.tokens.access.token
+  );
+  const refreshToken = useSelector((state) => state.auth.login.currentUser.tokens.refresh.token)
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (accessToken && refreshToken){
+      tokenExpired(accessToken, () => {refresh(refreshToken, dispatch)})
+    }
+  }, [accessToken, refreshToken, dispatch])
   return (
     <Routes>
       <Route path='/' element={<Login />} />

@@ -8,12 +8,14 @@ import { Table, Modal, Input } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { loginSuccess } from "../redux/authSlice";
 import './admin.css'
+import axios from "axios";
+import jwt_decode from "jwt-decode"
 
 function AdminUserPage() {
   //neu null thi ke luon
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(150);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecord, setTotalRecord] = useState(10);
+  const [totalRecord, setTotalRecord] = useState(8);
   const [dataSource, setDataSource] = useState([]);
   //adduser
   const [isAdding, setIsAdding] = useState(false);
@@ -23,18 +25,51 @@ function AdminUserPage() {
   const [role, setRole] = useState("")
 
   //
-  const user = useSelector((state) => state.auth.login?.currentUser);
-  const userList = useSelector((state) => state.users.users?.allUsers.results);
+  const user = useSelector((state) => state?.auth.login?.currentUser);
+  const userList = useSelector((state) => state?.users.users?.allUsers?.results);
   let accessToken = useSelector((state) => state.auth.login?.currentUser.tokens.access.token);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  let axiosJWT = axios.create();
+  const refreshToken = async () => {
+    try{
+      const res = await axios.post("https://fwa-ec-quiz-mock1.herokuapp.com/v1/auth/refresh-tokens", {
+        withCredentials: true,
+      })
+      console.log(res.data)
+      return res.data
+     
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+  axiosJWT.interceptors.request.use(
+    async(config) => {
+      let date = new Date()
+      const decodedToken = jwt_decode(accessToken)
+      if(decodedToken.exp < date.getTime()/1000){
+        const data = await refreshToken();
+        const refreshUser = {
+          ...user,
+          tokens: data.tokens
+        };
+        dispatch(loginSuccess(refreshUser))
+        config.headers["token"] = "Bearer " + data.tokens.access.token
+      }
+      return config;
+    },
+    (err) => {
+      return Promise.reject(err)
+    }
+  )
 
   useEffect(() => {
     if (!user) {
       navigate("/");
     } else if (user?.tokens.access.token) {
-      getAllUsers(user?.tokens.access.token, dispatch, currentPage, limit);
+      getAllUsers(user?.tokens.access.token, dispatch, currentPage, limit, axiosJWT);
     }
   }, []);
 
@@ -53,6 +88,7 @@ function AdminUserPage() {
       role: role
     }
     addNewUser(user?.tokens.access.token, newUser, dispatch)
+    setIsAdding(false)
   }
   const handleDelete = (id) => {
     deleteUser(accessToken, dispatch, id)

@@ -5,16 +5,23 @@ import { Button, Form, Select } from "antd";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllQuestionsUser, submitAnswer } from "../redux/apiRequest";
+import { handleScoreChange } from "../redux/ScoreSlice";
 
 function Questions() {
   const dispatch = useDispatch();
   const questionAmount = useSelector(
     (state) => state.questions.questions.amount
   );
+  const answerResult = useSelector((state) => state.answers.answers.submit);
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [options, setOptions] = useState([]);
-  const [disabled, setDisabled] = useState(false);
+  const [QuestionId, setId] = useState([]);
+  const [disabled, setDisabled] = useState(true);
+  const [value, setValue] = useState("");
+  const [type,setType] = useState("primary")
+
   const user = useSelector((state) => state.auth.login.currentUser.user);
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser.tokens.access.token
@@ -22,6 +29,8 @@ function Questions() {
   const questionList = useSelector(
     (state) => state.questions.questions.allQuestions.results
   );
+  const score = useSelector((state) => state.score.score);
+
   let [questionIndex, setQuestionIndex] = useState(0);
 
   const navigate = useNavigate();
@@ -29,9 +38,9 @@ function Questions() {
     getAllQuestionsUser(accessToken, dispatch, page, limit);
   }, []);
 
+  const question = questionList[questionIndex];
   useEffect(() => {
     if (questionList.length) {
-      const question = questionList[questionIndex];
       let answers = [
         question.answer1,
         question.answer2,
@@ -39,6 +48,7 @@ function Questions() {
         question.answer4,
       ];
       setOptions(answers);
+      setId(question.id);
     }
   }, [questionList, questionIndex]);
 
@@ -46,23 +56,39 @@ function Questions() {
     navigate("/questions");
     //mang du lieu cua so cau hoi de navigate sang
   };
+
   const handleNext = () => {
     if (questionIndex + 1 < questionAmount) {
       setQuestionIndex(questionIndex + 1);
     } else {
       navigate("/finalscore");
     }
+    console.log(questionIndex)
+    if(questionIndex + 1){
+      setDisabled(false)
+    }
+    
   };
   const handleBack = () => {
-   
     if (questionIndex + 1 <= questionAmount) {
       setQuestionIndex(questionIndex - 1);
-      console.log(questionIndex);
     }
-    // if (questionIndex = 1) {
-    //   setDisabled(true)
-    // }
+    if (questionIndex = 1){
+      setDisabled(true)
+    }
+    // console.log(questionIndex)
+    
+  
   };
+  const handleClick = (id) => {
+    let correctAnswer = { id: question.id, correctanswer: options[id] };
+    submitAnswer(accessToken, dispatch, correctAnswer);
+    if (options[id] === answerResult[0].correctanswer) {
+      dispatch(handleScoreChange(score + 1));
+    }
+    console.log(score);
+  };
+
   return (
     <div>
       <nav className="header">
@@ -93,7 +119,9 @@ function Questions() {
               key={id}
               block
               style={{ margin: "5px 10px" }}
-              onClick={() => submitAnswer(accessToken, dispatch)}
+             
+              onClick={() => {
+                handleClick(id)}}
             >
               {data}
             </Button>
@@ -101,7 +129,11 @@ function Questions() {
         </Form.Item>
 
         <Form.Item>
-          <Button onClick={handleBack} disabled={disabled}>
+          <Button
+            onClick={handleBack}
+            style={{ marginRight: "60px" }}
+            disabled={disabled}
+          >
             Back
           </Button>
           <Button onClick={handleNext}>Next</Button>

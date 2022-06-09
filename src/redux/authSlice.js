@@ -40,6 +40,18 @@ const authSlice = createSlice({
       state.register.success = false;
       state.register.error = true;
     },
+    RefreshStart: (state) => {
+      state.register.isFetching = true;
+    },
+    RefreshSuccess: (state,action) => {
+      state.login.currentUser.tokens = action.payload
+      state.register.isFetching = false;
+      state.register.error = false;
+    },
+    RefreshFailed: (state) => {
+      state.register.isFetching = false;
+      state.register.error = true;
+    }
   },
 });
 
@@ -50,6 +62,9 @@ export const {
   RegisterStart,
   RegisterSuccess,
   RegisterFailed,
+  RefreshSuccess,
+  RefreshStart,
+  RefreshFailed
 } = authSlice.actions;
 
 export default authSlice.reducer;

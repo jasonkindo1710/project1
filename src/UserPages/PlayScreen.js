@@ -3,10 +3,9 @@ import "./User.css";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Select, Input } from "antd";
 import { handleAmountChange } from "../redux/questionSlice";
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { loginSuccess } from "../redux/authSlice";
 import { getAllQuestionsUser } from "../redux/apiRequest";
 
 function PlayScreen() {
@@ -16,6 +15,7 @@ function PlayScreen() {
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser.tokens.access.token
   );
+  
 
   const navigate = useNavigate();
   const dispatch = useDispatch();

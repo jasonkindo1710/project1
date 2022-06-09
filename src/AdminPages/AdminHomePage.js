@@ -7,9 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 function AdminHomePage() {
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const userList = useSelector((state) => state.users.users?.allUsers.results);
-  // let accessToken = useSelector((state) => state.auth.login?.currentUser.tokens.access.token);
-  console.log(userList);
+ 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

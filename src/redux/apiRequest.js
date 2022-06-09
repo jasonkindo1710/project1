@@ -3,6 +3,9 @@ import {
   loginFailed,
   loginStart,
   loginSuccess,
+  RefreshSuccess,
+  RefreshStart,
+  RefreshFailed,
   RegisterFailed,
   RegisterStart,
   RegisterSuccess,
@@ -11,9 +14,19 @@ import {
 import {getQuestionsStart,
     getQuestionsFailed,
     getQuestionsSuccess,
+    getQuestionByIdStart,
+    getQuestionByIdSuccess,
+    getQuestionByIdFailed,
     addQuestionsStart,
     addQuestionsSuccess,
-    addQuestionsFailed} from "./questionSlice"
+    addQuestionsFailed,
+    deleteQuestionStart,
+    deleteQuestionFailed,
+    deleteQuestionSuccess,
+    updateQuestionStart,
+    updateQuestionSuccess,
+    updateQuestionFailed
+  } from "./questionSlice"
 import { getUsersFailed, getUsersStart, getUsersSuccess, addUsersStart, addUsersFailed, addUsersSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailed } from "./userSlice";
 import { addAnswerStart, addAnswerSuccess, addAnswerFailed} from './answerSlice'
 
@@ -48,6 +61,18 @@ export const registerUser = async (user, dispatch, navigate) => {
     dispatch(RegisterFailed());
   }
 };
+
+export const refresh = async (refreshToken, dispatch) => {
+  dispatch(RefreshStart())
+  try {
+    const res = await axios.post("https://fwa-ec-quiz-mock1.herokuapp.com/v1/auth/refresh-tokens" , {refreshToken})
+    dispatch(RefreshSuccess(res.data))
+  }
+  catch (err){
+    dispatch(RefreshFailed())
+  }
+  
+}
 //Admin
 export const getAllQuestions = async (accessToken, dispatch, page, limit) => {
   dispatch(getQuestionsStart());
@@ -64,13 +89,18 @@ export const getAllQuestions = async (accessToken, dispatch, page, limit) => {
     dispatch(getQuestionsFailed());
   }
 };
+
+
+
+//Admin user
 export const getAllUsers = async (accessToken, dispatch, page, limit) => {
   dispatch(getUsersStart());
   try{
-    const res = await axios.get(`https://fwa-ec-quiz-mock1.herokuapp.com/v1/users/?page=${page}&limit=${limit}}`, {
+    const res = await axios.get(`https://fwa-ec-quiz-mock1.herokuapp.com/v1/users/?page=${page}&limit=${limit}`, {
       headers: {Authorization: `Bearer ${accessToken}`}
     })
     dispatch(getUsersSuccess(res.data))
+
 
   }
   catch(err){
@@ -102,10 +132,10 @@ export const deleteUser = async(accessToken, dispatch, id) => {
     dispatch(deleteUserFailed(err.response.data))
   }
 }
-
+//admin question
 
 export const addNewQuestion = async (accessToken, question, dispatch) => {
-  // dispatch(addQuestionsStart());
+  dispatch(addQuestionsStart());
   try {
     const res = await axios.post("https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions/edit", 
       question, {
@@ -115,6 +145,47 @@ export const addNewQuestion = async (accessToken, question, dispatch) => {
   }
   catch(err){
     dispatch(addQuestionsFailed())
+  }
+}
+export const deleteQuestion = async(accessToken, dispatch, id) => {
+  dispatch(deleteQuestionStart());
+  try {
+    const res = await axios.delete(`https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions/edit/${id}`, {
+      headers: {Authorization: `Bearer ${accessToken}`}
+    })
+    dispatch(deleteQuestionSuccess(res.data))
+
+  }
+  catch(err){
+    dispatch(deleteQuestionFailed())
+  }
+}
+export const updateQuestion = async (accessToken, question, dispatch, id) => {
+  dispatch(updateQuestionStart())
+  try {
+    const res = await axios.patch(`https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions/edit/${id}`,
+    question,
+     {
+      headers: {Authorization: `Bearer ${accessToken}`}
+    })
+    dispatch(updateQuestionSuccess(res.data))
+  }
+  catch(err){
+    dispatch(updateQuestionFailed())
+  }
+}
+export const getQuestion = async (accessToken, dispatch, id) => {
+  dispatch(getQuestionByIdStart())
+  try {
+    const res = await axios.get(`https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions/edit/${id}`,
+    {
+      headers: {Authorization: `Bearer ${accessToken}`}
+    }
+    )
+    dispatch(getQuestionByIdSuccess(res.data))
+  }
+  catch(err){
+    dispatch(getQuestionByIdFailed())
   }
 }
 //User
@@ -133,10 +204,11 @@ export const getAllQuestionsUser = async (accessToken, dispatch, page, limit) =>
     dispatch(getQuestionsFailed());
   }
 };
-export const submitAnswer = async (accessToken, dispatch) => {
+export const submitAnswer = async (accessToken, dispatch, answer) => {
   dispatch(addAnswerStart())
   try{
-    const res = await axios.post("https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions/submit",
+    const res = await axios.post("https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions/submit", 
+    [answer],
     {
       headers: {Authorization: `Bearer ${accessToken}`}
     })
