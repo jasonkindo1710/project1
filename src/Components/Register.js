@@ -28,14 +28,32 @@ function Register() {
     <div className="login">
       <Form className='login-form' onFinish={handleRegister}>
         <h1>Register</h1>
-        <Form.Item label='User Name' name='username'>
-          <Input prefix={<UserOutlined className='prefix' />} placeholder='Username' required  onChange={(e) => setUsername(e.target.value)}/>
+        <Form.Item label='User Name' name='username'
+         rules={[
+              {
+                required: true,
+                message: "Please input your username!",
+              },
+            ]}
+        >
+          <Input prefix={<UserOutlined className='prefix' />} placeholder='Username'   onChange={(e) => setUsername(e.target.value)}/>
         </Form.Item>
-        <Form.Item label='Email' name='email'>
-          <Input prefix={<MailOutlined className='prefix' />} placeholder='Email' required onChange={(e) => setEmail(e.target.value)}/>
+        <Form.Item label='Email' name='email'
+         rules={[
+              {
+                required: true,
+                message: "Please input your email!",
+              },
+            ]}>
+          <Input prefix={<MailOutlined className='prefix' />} placeholder='Email'  onChange={(e) => setEmail(e.target.value)}/>
         </Form.Item>
-        <Form.Item label='Password' name='password'>
-          <Input prefix={<LockOutlined className='prefix'/>} type='password' placeholder='Enter your Password' required onChange={(e) => setPassword(e.target.value)}/>
+        <Form.Item label='Password' name='password' rules={[
+              {
+                required: true,
+                message: "Please input your password!",
+              },
+            ]}>
+          <Input prefix={<LockOutlined className='prefix'/>} type='password' placeholder='Enter your Password'  onChange={(e) => setPassword(e.target.value)}/>
         </Form.Item>
         <Form.Item>
           <Button block type='primary' htmlType='submit'  className='login-form-button'>Sign Up</Button>

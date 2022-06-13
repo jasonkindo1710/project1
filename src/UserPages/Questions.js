@@ -6,25 +6,45 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllQuestionsUser, submitAnswer } from "../redux/apiRequest";
 import { handleScoreChange } from "../redux/ScoreSlice";
+import { logOut } from "../redux/apiRequest";
+import { useRef } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
+import { css } from "@emotion/react";
 
 function Questions() {
-  const dispatch = useDispatch();
-  const questionAmount = useSelector(
-    (state) => state.questions.questions.amount
-  );
-  const answerResult = useSelector((state) => state.answers.answers.submit);
-
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [options, setOptions] = useState([]);
   const [QuestionId, setId] = useState([]);
   const [disabled, setDisabled] = useState(true);
   const [value, setValue] = useState("");
-  const [type,setType] = useState("primary")
+  const [type, setType] = useState("primary");
+  const [questionID, setQuestionID] = useState("");
+  let [answerResult, setAnswerResult] = useState([]);
+  const [dataSource, setDataSource] = useState([]);
 
-  const user = useSelector((state) => state.auth.login.currentUser.user);
+  //spinner
+  const override = css`
+    position: fixed;
+    left: 50%;
+    top: 35%;
+    height: 50px;
+    width: 50px;
+    z-index: 9999;
+    border-color: #0048ba;
+    background-color: black;
+  `;
+  let [loading, setLoading] = useState(false);
+  let [color, setColor] = useState("#ffffff");
+
+  const dispatch = useDispatch();
+  const questionAmount = useSelector(
+    (state) => state.questions.questions.amount
+  );
+
+  const user = useSelector((state) => state.auth.login.currentUser?.user);
   const accessToken = useSelector(
-    (state) => state.auth.login.currentUser.tokens.access.token
+    (state) => state.auth.login.currentUser?.tokens.access.token
   );
   const questionList = useSelector(
     (state) => state.questions.questions.allQuestions.results
@@ -37,6 +57,13 @@ function Questions() {
   useEffect(() => {
     getAllQuestionsUser(accessToken, dispatch, page, limit);
   }, []);
+  const refreshToken = useSelector(
+    (state) => state.auth.login.currentUser?.tokens?.refresh.token
+  );
+  const handleLogout = async () => {
+    setLoading(true)
+    await logOut(refreshToken, dispatch, navigate);
+  };
 
   const question = questionList[questionIndex];
   useEffect(() => {
@@ -57,49 +84,48 @@ function Questions() {
     //mang du lieu cua so cau hoi de navigate sang
   };
 
+  const buttonRef = useRef([]);
+  const handleClick = (id) => {
+    let correctAnswer = { id: question.id, correctanswer: options[id] };
+    buttonRef.current.push(correctAnswer);
+  };
+
   const handleNext = () => {
     if (questionIndex + 1 < questionAmount) {
       setQuestionIndex(questionIndex + 1);
-    } else {
-      navigate("/finalscore");
     }
-    console.log(questionIndex)
-    if(questionIndex + 1){
-      setDisabled(false)
-    }
-    
   };
-  const handleBack = () => {
-    if (questionIndex + 1 <= questionAmount) {
-      setQuestionIndex(questionIndex - 1);
-    }
-    if (questionIndex = 1){
-      setDisabled(true)
-    }
-    // console.log(questionIndex)
-    
-  
+
+  const handleSubmit = async () => {
+    let finalResult = buttonRef.current;
+
+    setLoading(true);
+    await submitAnswer(accessToken, dispatch, finalResult);
+    navigate("/finalscore");
   };
-  const handleClick = (id) => {
-    let correctAnswer = { id: question.id, correctanswer: options[id] };
-    submitAnswer(accessToken, dispatch, correctAnswer);
-    if (options[id] === answerResult[0].correctanswer) {
-      dispatch(handleScoreChange(score + 1));
+
+  const handleBack = () => {    
+    if (questionIndex > 0){
+      setQuestionIndex(questionIndex - 1)
+    }  
+    if(questionIndex <= 0) {
+      setQuestionIndex(questionIndex)
     }
-    console.log(score);
   };
+  const handleSkip = () => {
+    if (questionIndex + 1 < questionAmount) {
+      setQuestionIndex(questionIndex + 2);
+    }
+  }
 
   return (
     <div>
+      <ClipLoader color={color} loading={loading} css={override} />
       <nav className="header">
         <h1>
-          Welcome <span> {user.username} </span>
+          Welcome <span> {user?.username} </span>
         </h1>
-        <Button
-          type="primary"
-          className="logout_btn"
-          onClick={() => navigate("/")}
-        >
+        <Button type="primary" className="logout_btn" onClick={handleLogout}>
           Log out
         </Button>
       </nav>
@@ -119,9 +145,9 @@ function Questions() {
               key={id}
               block
               style={{ margin: "5px 10px" }}
-             
               onClick={() => {
-                handleClick(id)}}
+                handleClick(id);
+              }}
             >
               {data}
             </Button>
@@ -129,14 +155,19 @@ function Questions() {
         </Form.Item>
 
         <Form.Item>
-          <Button
-            onClick={handleBack}
-            style={{ marginRight: "60px" }}
-            disabled={disabled}
-          >
-            Back
-          </Button>
-          <Button onClick={handleNext}>Next</Button>
+          <div className="select">
+            <Button onClick={handleBack}>
+              Back
+            </Button>
+            {questionIndex + 1 == questionAmount ? (
+              <Button onClick={handleSubmit}>Submit</Button>
+            ) : (
+              <Button onClick={handleNext}>Save & Next</Button>
+            )}
+            <Button onClick={handleSkip}>
+              Skip
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </div>

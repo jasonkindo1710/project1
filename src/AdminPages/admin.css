@@ -1,8 +1,44 @@
+.header{
+    display: flex;
+    border-bottom: 1px solid #d3d3d3;
+    width: 100%;
+    padding: 20px 10px;
+}
 .table {
     margin: auto;
+    max-width: 95%;
 }
 .btn_add{
     display: block;
-    margin: 0 auto;
+    margin: 10px auto;
     align-content: center;
+}
+
+.btn_manage{
+    margin: 20px 10px 10px;
+}
+
+.btnDiv{
+    margin: auto 70px;
+}
+
+.avatar {
+    width: 40px;
+    margin-right: 15px;
+    margin-left: -10px;
+}
+.logout_btn {
+    margin-top: 3px;
+}
+.dropdown_btn{
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px;
+}
+.dropdown_input{
+    padding: 10px;
+    width: 90%;
+    height: 50%;
+    margin-top: 10px;
+    margin: 0 10px;
 }

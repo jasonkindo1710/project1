@@ -7,17 +7,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllQuestionsUser, submitAnswer } from "../redux/apiRequest";
 import { handleAmountChange } from "../redux/questionSlice";
 import { handleScoreChange } from "../redux/ScoreSlice";
+import { logOut } from "../redux/apiRequest";
+import { Progress } from "antd";
 
 function FinalScore() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.login.currentUser.user);
+  const user = useSelector((state) => state.auth.login.currentUser?.user);
   const score = useSelector((state) => state.score.score);
   const amount = useSelector((state) => state.questions.questions.amount);
-  const percent = (score / amount) * 100;
+  const percent = Math.round((score / amount) * 100);
+
+  const submit = useSelector((state) => state.answers.answers?.submit);
+  const final = submit.filter((item) => item.result === true);
+  dispatch(handleScoreChange(final.length));
   const accessToken = useSelector(
-    (state) => state.auth.login.currentUser.tokens.access.token
+    (state) => state.auth.login.currentUser?.tokens?.access.token
   );
+  const refreshToken = useSelector(
+    (state) => state.auth.login.currentUser?.tokens?.refresh.token
+  );
+  const handleLogout = () => {
+    logOut(refreshToken, dispatch, navigate);
+  };
 
   const handleBackToSettings = () => {
     dispatch(handleScoreChange(0));
@@ -25,46 +37,52 @@ function FinalScore() {
     navigate("/playscreen");
   };
   const handleBackToQuiz = () => {
-    dispatch(handleScoreChange(0))
-    dispatch(handleAmountChange(amount))
-    navigate('/question')
-  }
+    dispatch(handleScoreChange(0));
+    dispatch(handleAmountChange(amount));
+    navigate("/question");
+  };
   return (
     <div>
       <nav className="header">
         <h1>
-          Welcome <span> {user.username} </span>
+          Welcome <span> {user?.username} </span>
         </h1>
-        <Button
-          type="primary"
-          className="logout_btn"
-          onClick={() => navigate("/")}
-        >
+        <Button type="primary" className="logout_btn" onClick={handleLogout}>
           Log out
         </Button>
       </nav>
 
       <Form className="playscreen">
         <Form.Item>
-          <h1> Final Score</h1>
-        </Form.Item>
-        <Form.Item>
+        <div className="display">
+        <h1> Final Score</h1>
           <h1>
             You get {score} out of {amount}
           </h1>
-        </Form.Item>
-        <Form.Item>
           <h1>Your score is: {percent}%</h1>
+        </div>
+          
         </Form.Item>
         {percent < 60 ? (
           <Form.Item>
-            <p>You need at least 60% to pass</p>
-            <Button onClick={handleBackToQuiz} className="Button__Back">Retry</Button>
+            <div className="progress">
+              <Progress type="circle" percent={percent} status="exception" style={{marginBottom: "20px"}}/>
+
+              <p>You need at least 60% to pass. Please try again</p>
+              <Button onClick={handleBackToQuiz} className="Button__Back">
+                Retry
+              </Button>
+            </div>
           </Form.Item>
         ) : (
           <Form.Item>
-            <p>Congratulation! You have passed!</p>
-            <Button onClick={handleBackToSettings} className="Button__Back">Back to Settings!</Button>
+            <div className="progress">
+              <Progress type="circle" percent={100} style={{marginBottom: "20px"}}/>
+              <p>Congratulation! You have passed!</p>
+              <Button onClick={handleBackToSettings} className="Button__Back">
+                Back to Settings!
+              </Button>
+            </div>
           </Form.Item>
         )}
       </Form>
