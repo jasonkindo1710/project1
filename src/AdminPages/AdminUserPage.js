@@ -69,6 +69,7 @@ function AdminUserPage() {
   useEffect(() => {
     setDataSource(userList);
   }, []);
+  const uniqueKey = dataSource.map(item => item.username)
 
   const addUser = () => {
     setLoading(true);
@@ -268,6 +269,8 @@ function AdminUserPage() {
         dataSource={dataSource}
         columns={columns}
         pagination={true}
+        key={uniqueKey}
+        
       >
         {" "}
       </Table>

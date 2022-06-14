@@ -60,6 +60,7 @@ function AdminQuestionPage() {
     (state) => state.questions?.questions?.allQuestions.results)
     console.log(questionList)
 
+    
   
   const total = questionList.length;
   const singleQuestion = useSelector(
@@ -84,6 +85,8 @@ function AdminQuestionPage() {
   useEffect(() => {
     setDataSource(questionList);
   }, [questionList]);
+  
+  const uniqueKey = dataSource.map(item => item.id)
 
   useEffect(() => {
     if (user?.tokens.access.token) {
@@ -241,6 +244,7 @@ function AdminQuestionPage() {
         dataSource={dataSource}
         columns={columns}
         pagination={true}
+        key={uniqueKey}
       >
         {" "}
       </Table>
