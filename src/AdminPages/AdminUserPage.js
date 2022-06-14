@@ -44,11 +44,13 @@ function AdminUserPage() {
 
   const user = useSelector((state) => state?.auth.login?.currentUser);
   const userList = useSelector(
-    (state) => state?.users.users?.allUsers?.results
+    (state) => state.users.users.allUsers.results
   );
+  const total = userList.length;
   let accessToken = useSelector(
-    (state) => state.auth.login.currentUser?.tokens.access.token
+    (state) => state?.auth.login.currentUser?.tokens.access.token
   );
+
   const [form] = Form.useForm();
 
   const dispatch = useDispatch();
@@ -253,9 +255,14 @@ function AdminUserPage() {
   return (
     <div>
       <ClipLoader color={color} loading={loading} css={override} />
-      <Button className="btn_add" onClick={addUser} type="primary">
+      <div className="total">
+      <h3>Total Users: {total}</h3>
+      <Button onClick={addUser} type="primary">
         Add a new user
       </Button>
+      </div>
+      
+
       <Table
         className="table"
         dataSource={dataSource}
@@ -334,17 +341,19 @@ function AdminUserPage() {
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button onClick={() => setIsAdding(false)}>Cancel</Button>
-            <Button htmlType="submit" onClick={handleAddUser}>
-              Save
-            </Button>
-            <Button
-              onClick={() => {
-                console.log(form.resetFields());
-              }}
-            >
-              Clear
-            </Button>
+            <div className="btn_list">
+              <Button onClick={() => setIsAdding(false)}>Cancel</Button>
+              <Button htmlType="submit" onClick={handleAddUser}>
+                Save
+              </Button>
+              <Button
+                onClick={() => {
+                  console.log(form.resetFields());
+                }}
+              >
+                Clear
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </Modal>

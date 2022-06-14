@@ -10,6 +10,7 @@ import { Routes, Route } from "react-router-dom";
 import AdminUserPage from "./AdminPages/AdminUserPage";
 import AdminQuestionPage from "./AdminPages/AdminQuestionPage";
 import { useDispatch, useSelector } from "react-redux";
+import PageNotFound from "./RouteGuard/PageNotFound";
 
 import tokenExpired from "./redux/tokenExpired";
 import { refresh } from "./redux/apiRequest";
@@ -38,6 +39,7 @@ function App() {
       <Route element={<RedirectRole accessToken={accessToken} role={role} />}>
         <Route path="/" element={<Login />} />
         <Route path="register" element={<Register />} />
+        
       </Route>
       <Route element={<UserRole accessToken={accessToken} role={role} />}>
         <Route path="playscreen" element={<PlayScreen />} />
@@ -50,6 +52,7 @@ function App() {
           <Route path="adminquestion" element={<AdminQuestionPage />} />
         </Route>
       </Route>
+      <Route element={<PageNotFound />} />
     </Routes>
   );
 }

@@ -40,6 +40,7 @@ function AdminQuestionPage() {
   const [answer4, setAnswer4] = useState("");
   const [correctanswer, setCorrectanswer] = useState("");
   const [questionID, setQuestionID] = useState("");
+  
 
   //reload
   const [flag, setFlag] = useState(false);
@@ -50,26 +51,46 @@ function AdminQuestionPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.login?.currentUser);
+  
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.access.token
   );
-  const questionList = useSelector(
-    (state) => state.questions.questions?.allQuestions?.results
-  );
-  const singleQuestion = useSelector(
-    (state) => state.questions.questions?.question
-  );
 
+  const questionList = useSelector(
+    (state) => state.questions?.questions?.allQuestions.results)
+    console.log(questionList)
+
+  
+  const total = questionList.length;
+  const singleQuestion = useSelector(
+    (state) => state.questions?.questions.question
+  );
+  
+  console.log(singleQuestion)
+
+
+  //editquestion
+  const [newQuestion, setNewQuestion] = useState(singleQuestion.question)
+  const [newAnswer1, setNewAnswer1] = useState(singleQuestion.answer1)
+  const [newAnswer2, setNewAnswer2] = useState(singleQuestion.answer2)
+  const [newAnswer3, setNewAnswer3] = useState(singleQuestion.answer3)
+  const [newAnswer4, setNewAnswer4] = useState(singleQuestion.answer4)
+
+  // console.log(newAnswer1)
+  // console.log(singleQuestion.answer1)
+
+
+  
   useEffect(() => {
     setDataSource(questionList);
   }, [questionList]);
 
   useEffect(() => {
     if (user?.tokens.access.token) {
-      setLoading(true)
+      setLoading(true);
       getAllQuestions(user?.tokens.access.token, dispatch, page, limit);
     }
-   setLoading(false)
+    setLoading(false);
   }, [flag]);
 
   useEffect(() => {
@@ -98,7 +119,7 @@ function AdminQuestionPage() {
     setLoading(true);
     await addNewQuestion(accessToken, newQuestion, dispatch);
     // setIsAdding(false);
-    form.resetFields()
+    form.resetFields();
     setFlag(!flag);
   };
 
@@ -107,9 +128,9 @@ function AdminQuestionPage() {
     setFlag(!flag);
   };
   const handleEdit = async (id) => {
-    setLoading(true)
+    setLoading(true);
     await getQuestion(accessToken, dispatch, id);
-    setLoading(false)
+    setLoading(false);
     setIsEdting(true);
     setQuestionID(id);
   };
@@ -140,7 +161,7 @@ function AdminQuestionPage() {
     };
     setLoading(true);
     await updateQuestion(accessToken, updatedQuestion, dispatch, questionID);
-   
+
     setIsEdting(false);
     setFlag(!flag);
   };
@@ -207,10 +228,14 @@ function AdminQuestionPage() {
 
   return (
     <div>
-    <ClipLoader color={color} loading={loading}  css={override} />
-      <Button className="btn_add" onClick={addQuestion} type="primary">
-        Add A New Question
-      </Button>
+      <ClipLoader color={color} loading={loading} css={override} />
+      <div className="total">
+        <h3>Total Questions: {total}</h3>
+        <Button onClick={addQuestion} type="primary">
+          Add A New Question
+        </Button>
+      </div>
+
       <Table
         className="table"
         dataSource={dataSource}
@@ -219,156 +244,250 @@ function AdminQuestionPage() {
       >
         {" "}
       </Table>
+
       <Modal
         title="Adding a new question"
         visible={isAdding}
         closable={false}
         footer={null}
- 
       >
         <Form form={form} onFinish={handleAddQuestion}>
-          <Form.Item 
-          label="Question" name="question"
-          rules={[
-          {
-            required: true,
-            message: 'Please input your question!',
-          },
-        ]}>
+          <Form.Item
+            label="Question"
+            name="question"
+            rules={[
+              {
+                required: true,
+                message: "Please input your question!",
+              },
+            ]}
+          >
             <Input
               placeholder="Question"
               onChange={(e) => setQuestion(e.target.value)}
             />
           </Form.Item>
-          <Form.Item 
-          label="Answer 1" name="answer1"
-          rules={[
-          {
-            required: true,
-            message: 'Please input your answer!',
-          },
-        ]}>
+          <Form.Item
+            label="Answer 1"
+            name="answer1"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
             <Input
               placeholder="Answer 1"
               onChange={(e) => setAnswer1(e.target.value)}
             />
           </Form.Item>
-          <Form.Item 
-          label="Answer 2" name="answer2"
-          rules={[
-          {
-            required: true,
-            message: 'Please input your answer!',
-          },
-        ]}>
+          <Form.Item
+            label="Answer 2"
+            name="answer2"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
             <Input
               placeholder="Answer 2"
               onChange={(e) => setAnswer2(e.target.value)}
             />
           </Form.Item>
-          <Form.Item 
-          label="Answer 3" name="answer3"
-          rules={[
-          {
-            required: true,
-            message: 'Please input your answer!',
-          },
-        ]}>
+          <Form.Item
+            label="Answer 3"
+            name="answer3"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
             <Input
               placeholder="Answer 3"
               onChange={(e) => setAnswer3(e.target.value)}
             />
           </Form.Item>
-          <Form.Item 
-          label="Answer 4" name="answer4"
-          rules={[
-          {
-            required: true,
-            message: 'Please input your answer!',
-          },
-        ]}>
+          <Form.Item
+            label="Answer 4"
+            name="answer4"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
             <Input
               placeholder="Answer 4"
               onChange={(e) => setAnswer4(e.target.value)}
             />
           </Form.Item>
-          <Form.Item 
-          label="Correct Answer" name="correctanswer"
-          rules={[
-          {
-            required: true,
-            message: 'Please input your correct answer!',
-          },
-        ]}>
-            <Input
-              placeholder="Correct Answer"
-              onChange={(e) => setCorrectanswer(e.target.value)}
-            />
+          <Form.Item
+            label="Correct Answer:"
+            name="correctanswer"
+            rules={[
+              {
+                required: true,
+                message: "Please select the correct answer!",
+              },
+            ]}
+          >
+            <Select
+              placeholder="Choose correct answer"
+              onChange={(e) => {setCorrectanswer(e)}}
+            >
+              <Select.Option value={answer1} key="1">
+                {answer1}
+              </Select.Option>
+              <Select.Option value={answer2} key="2">
+                {answer2}
+              </Select.Option>
+              <Select.Option value={answer3} key="3">
+                {answer3}
+              </Select.Option>
+              <Select.Option value={answer4} key="4">
+                {answer4}
+              </Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item>
-            <Button onClick={() => setIsAdding(false)}>Cancel</Button>
-            <Button htmlType="submit" >Save</Button>
-            <Button onClick={() => {console.log(form.resetFields())}}>Clear</Button>
+            <div className="btn_list">
+              <Button onClick={() => setIsAdding(false)}>Cancel</Button>
+              <Button htmlType="submit">Save</Button>
+              <Button
+                onClick={() => {
+                  form.resetFields();
+                }}
+              >
+                Clear
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </Modal>
       <Modal
-          title="Editing this question"
-          visible={isEditing}
-          footer={null}
-          closable={false}
-        >
-          <Form form={form} onFinish={submitEdit}>
-            <Form.Item name="question">
-              <Input
-                placeholder="Question"
-                onChange={(e) => setQuestion(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="answer1">
-              <Input
-                placeholder="Answer 1"
-                onChange={(e) => setAnswer1(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="answer2">
-              <Input
-                placeholder="Answer 2"
-                onChange={(e) => setAnswer2(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="answer3">
-              <Input
-                placeholder="Answer 3"
-                onChange={(e) => setAnswer3(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="answer4">
-              <Input
-                placeholder="Answer 4"
-                onChange={(e) => setAnswer4(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item name="correctanswer">
-              <Select
-                placeholder="Choose correct answer"
-                onChange={(e) => setCorrectanswer(e)}
-              >
-                <Select.Option value={singleQuestion.answer1}>{singleQuestion.answer1}</Select.Option>
-                <Select.Option value={singleQuestion.answer2}>{singleQuestion.answer2}</Select.Option>
-                <Select.Option value={singleQuestion.answer3}>{singleQuestion.answer3}</Select.Option>
-                <Select.Option value={singleQuestion.answer4}>{singleQuestion.answer4}</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button 
-              onClick={() => setIsEdting(false)}
-              >Cancel</Button>
+        title="Editing this question"
+        visible={isEditing}
+        footer={null}
+        closable={false}
+      >
+        <Form form={form} onFinish={submitEdit}>
+          <Form.Item
+            label="Question:"
+            name="question"
+            rules={[
+              {
+                required: true,
+                message: "Please input your question!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Question"
+              onChange={(e) => setNewQuestion(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Answer 1:"
+            name="answer1"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Answer 1"
+              onChange={(e) => setNewAnswer1(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Answer 2:"
+            name="answer2"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Answer 2"
+              onChange={(e) => setNewAnswer2(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Answer 3:"
+            name="answer3"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Answer 3"
+              onChange={(e) => setNewAnswer3(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Answer 4:"
+            name="answer4"
+            rules={[
+              {
+                required: true,
+                message: "Please input your answer!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="Answer 4"
+              onChange={(e) => setNewAnswer4(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Correct Answer:"
+            name="correctanswer"
+            rules={[
+              {
+                required: true,
+                message: "Please select the correct answer!",
+              },
+            ]}
+          >
+            <Select
+              placeholder="Choose correct answer"
+              onChange={(e) => {setCorrectanswer(e)}}
+            >
+              <Select.Option value={newAnswer1} key="1">
+                {newAnswer1}
+              </Select.Option>
+              <Select.Option value={newAnswer2} key="2">
+                {newAnswer2}
+              </Select.Option>
+              <Select.Option value={newAnswer3} key="3">
+                {newAnswer3}
+              </Select.Option>
+              <Select.Option value={newAnswer4} key="4">
+                {newAnswer4}
+              </Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <div className="btn_list">
+              <Button onClick={() => setIsEdting(false)}>Cancel</Button>
               <Button htmlType="submit">Save</Button>
-            </Form.Item>
-          </Form>
+            </div>
+          </Form.Item>
+        </Form>
       </Modal>
-      
     </div>
   );
 }

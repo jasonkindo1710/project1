@@ -43,6 +43,7 @@ function PlayScreen() {
     await logOut(refreshToken, dispatch, navigate)
   }
   const handleFinish = () => {
+    setLoading(true)
     navigate("/question");
     //mang du lieu cua so cau hoi de navigate sang
   };

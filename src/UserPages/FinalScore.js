@@ -9,6 +9,8 @@ import { handleAmountChange } from "../redux/questionSlice";
 import { handleScoreChange } from "../redux/ScoreSlice";
 import { logOut } from "../redux/apiRequest";
 import { Progress } from "antd";
+import ClipLoader from "react-spinners/ClipLoader";
+import { css } from "@emotion/react";
 
 function FinalScore() {
   const navigate = useNavigate();
@@ -20,6 +22,7 @@ function FinalScore() {
 
   const submit = useSelector((state) => state.answers.answers?.submit);
   const final = submit.filter((item) => item.result === true);
+  console.log(final)
   dispatch(handleScoreChange(final.length));
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.access.token
@@ -27,8 +30,22 @@ function FinalScore() {
   const refreshToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.refresh.token
   );
-  const handleLogout = () => {
-    logOut(refreshToken, dispatch, navigate);
+    //spinner
+    const override = css`
+    position: fixed;
+    left: 50%;
+    top: 35%;
+    height: 50px;
+    width: 50px;
+    z-index: 9999;
+    border-color: #0048ba;
+    background-color: black;
+  `;
+  let [loading, setLoading] = useState(false);
+  let [color, setColor] = useState("#ffffff");
+  const handleLogout = async () => {
+    setLoading(true)
+    await logOut(refreshToken, dispatch, navigate);
   };
 
   const handleBackToSettings = () => {
@@ -43,6 +60,7 @@ function FinalScore() {
   };
   return (
     <div>
+    <ClipLoader color={color} loading={loading} css={override} />
       <nav className="header">
         <h1>
           Welcome <span> {user?.username} </span>

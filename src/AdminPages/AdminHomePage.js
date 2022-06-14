@@ -16,12 +16,6 @@ function AdminHomePage() {
   const avatar = useSelector(
     (state) => state.auth.login?.currentUser?.user.avatar
   );
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    logOut(refreshToken, dispatch, navigate);
-  };
   //spinner
   const override = css`
     position: fixed;
@@ -34,6 +28,14 @@ function AdminHomePage() {
   `;
   let [loading, setLoading] = useState(false);
   let [color, setColor] = useState("#ffffff");
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    setLoading(true)
+    await logOut(refreshToken, dispatch, navigate);
+  };
+  
 
   return (
     <div>

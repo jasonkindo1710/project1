@@ -116,6 +116,9 @@ function Questions() {
     if (questionIndex + 1 < questionAmount) {
       setQuestionIndex(questionIndex + 2);
     }
+   if (questionIndex + 1 == questionAmount - 1){
+     setQuestionIndex(questionIndex)
+   }
   }
 
   return (
