@@ -52,7 +52,7 @@ function App() {
           <Route path="adminquestion" element={<AdminQuestionPage />} />
         </Route>
       </Route>
-      <Route element={<PageNotFound />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 }
