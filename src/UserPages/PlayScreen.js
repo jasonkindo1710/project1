@@ -1,7 +1,7 @@
 import "antd/dist/antd.css";
 import "./User.css";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Select, Input } from "antd";
+import { Button, Form, Select, Input, InputNumber } from "antd";
 import { handleAmountChange } from "../redux/questionSlice";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,8 +15,6 @@ import {faStopwatch } from "@fortawesome/free-solid-svg-icons"
 import {faClock} from "@fortawesome/free-regular-svg-icons"
 
 
-
-
 function PlayScreen() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(50);
@@ -28,6 +26,8 @@ function PlayScreen() {
   const avatar = useSelector(
     (state) => state.auth.login?.currentUser?.user.avatar
   );
+  const totalQuestion = useSelector((state) => state.questions?.questions?.allQuestions?.totalResults)
+ 
     //spinner
     const override = css`
     position: fixed;
@@ -90,7 +90,7 @@ function PlayScreen() {
           <Input type="number" onChange={handleAmount}/>
         </Form.Item>
         <Form.Item>
-          <p className="style-p">We have up to 40 questions</p>
+          <p className="style-p">We have up to {totalQuestion} questions</p>
         </Form.Item>
         <Form.Item>
           <Button
