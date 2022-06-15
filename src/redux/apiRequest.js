@@ -224,9 +224,6 @@ export const deleteQuestion = async (accessToken, dispatch, id) => {
     }, 500);
     dispatch(deleteQuestionSuccess(res.data));
   } catch (err) {
-    setTimeout(() => {
-      message.error("Question has been deleted unsuccessfully!");
-    }, 500);
     dispatch(deleteQuestionFailed());
   }
 };

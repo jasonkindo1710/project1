@@ -26,7 +26,7 @@ const override = css`
   border-color: #0048ba;
 `;
 function AdminQuestionPage() {
-  const [limit, setLimit] = useState(50);
+  const [limit, setLimit] = useState(100);
   const [page, setPage] = useState(1);
   const [dataSource, setDataSource] = useState([]);
   const [isEditing, setIsEdting] = useState(false);
