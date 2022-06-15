@@ -44,12 +44,12 @@ function AdminUserPage() {
 
   const user = useSelector((state) => state?.auth.login?.currentUser);
   const userList = useSelector(
-    (state) => state.users.users.allUsers.results
+    (state) => state.users?.users.allUsers.results
   );
   console.log(userList)
 
 
-  const total = userList.length;
+  const total = userList?.length;
   let accessToken = useSelector(
     (state) => state?.auth.login.currentUser?.tokens.access.token
   );
@@ -72,7 +72,7 @@ function AdminUserPage() {
   useEffect(() => {
     setDataSource(userList);
   }, []);
-  const uniqueKey = dataSource.map(item => item.username)
+  const uniqueKey = dataSource?.map(item => item.username)
 
   const addUser = () => {
     setLoading(true);

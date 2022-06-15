@@ -60,7 +60,7 @@ function AdminQuestionPage() {
   );
   console.log(questionList)
 
-  const total = questionList.length;
+  const total = questionList?.length;
   const singleQuestion = useSelector(
     (state) => state.questions?.questions?.question
   );
@@ -80,7 +80,7 @@ function AdminQuestionPage() {
     setDataSource(questionList);
   }, [questionList]);
 
-  const uniqueKey = dataSource.map((item) => item.id);
+  const uniqueKey = dataSource?.map((item) => item.id);
 
   useEffect(() => {
     if (user?.tokens.access.token) {

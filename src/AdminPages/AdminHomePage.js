@@ -36,6 +36,7 @@ function AdminHomePage() {
   const handleLogout = async () => {
     setLoading(true);
     await logOut(refreshToken, dispatch, navigate);
+    setLoading(false);
   };
 
   return (
