@@ -8,6 +8,9 @@ import { loginUser } from "../redux/apiRequest";
 import { useDispatch } from "react-redux";
 import ClipLoader from "react-spinners/ClipLoader";
 import { css } from "@emotion/react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {faSignIn } from "@fortawesome/free-solid-svg-icons"
+import {faUser} from "@fortawesome/free-regular-svg-icons"
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -42,7 +45,9 @@ function Login() {
     <div className="login">
       <ClipLoader color={color} loading={loading} css={override} />
       <Form className="login-form" onFinish={handleLogin}>
-        <h1>Sign In</h1>
+        <h1>Sign In
+        <span><FontAwesomeIcon icon={faUser} style={{marginLeft: '10px', height: '25px', marginBottom: '3px'}}  ></FontAwesomeIcon></span>
+        </h1>
         <Form.Item
           label="User Name"
           name="username"

@@ -13,7 +13,7 @@ import {
   getQuestion,
 } from "../redux/apiRequest";
 import { Table, Modal, Input } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SearchOutlined, } from "@ant-design/icons";
 import "./admin.css";
 
 const override = css`
@@ -40,7 +40,6 @@ function AdminQuestionPage() {
   const [answer4, setAnswer4] = useState("");
   const [correctanswer, setCorrectanswer] = useState("");
   const [questionID, setQuestionID] = useState("");
-  
 
   //reload
   const [flag, setFlag] = useState(false);
@@ -51,42 +50,37 @@ function AdminQuestionPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.login?.currentUser);
-  
+
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.access.token
   );
 
   const questionList = useSelector(
-    (state) => state.questions?.questions?.allQuestions.results)
-    console.log(questionList)
+    (state) => state.questions?.questions.allQuestions.results
+  );
+  console.log(questionList)
 
-    
-  
   const total = questionList.length;
   const singleQuestion = useSelector(
-    (state) => state.questions?.questions.question
+    (state) => state.questions?.questions?.question
   );
-  
-  console.log(singleQuestion)
 
+  console.log(singleQuestion);
 
   //editquestion
-  const [newQuestion, setNewQuestion] = useState(singleQuestion.question)
-  const [newAnswer1, setNewAnswer1] = useState(singleQuestion.answer1)
-  const [newAnswer2, setNewAnswer2] = useState(singleQuestion.answer2)
-  const [newAnswer3, setNewAnswer3] = useState(singleQuestion.answer3)
-  const [newAnswer4, setNewAnswer4] = useState(singleQuestion.answer4)
-
-  // console.log(newAnswer1)
-  // console.log(singleQuestion.answer1)
+  const [newQuestion, setNewQuestion] = useState(singleQuestion.question);
+  const [newAnswer1, setNewAnswer1] = useState(singleQuestion.answer1);
+  const [newAnswer2, setNewAnswer2] = useState(singleQuestion.answer2);
+  const [newAnswer3, setNewAnswer3] = useState(singleQuestion.answer3);
+  const [newAnswer4, setNewAnswer4] = useState(singleQuestion.answer4);
+  const [newCorrectAnswer, setNewCorrectAnswer] = useState("")
 
 
-  
   useEffect(() => {
     setDataSource(questionList);
   }, [questionList]);
-  
-  const uniqueKey = dataSource.map(item => item.id)
+
+  const uniqueKey = dataSource.map((item) => item.id);
 
   useEffect(() => {
     if (user?.tokens.access.token) {
@@ -122,7 +116,6 @@ function AdminQuestionPage() {
     setLoading(true);
     await addNewQuestion(accessToken, newQuestion, dispatch);
     // setIsAdding(false);
-    form.resetFields();
     setFlag(!flag);
   };
 
@@ -173,6 +166,60 @@ function AdminQuestionPage() {
       title: "Question",
       dataIndex: "question",
       key: "1",
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Search name"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onPressEnter={() => {
+                confirm();
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+              className="dropdown_input"
+            ></Input>
+            <div className="dropdown_btn">
+              <Button
+                onClick={() => {
+                  confirm();
+                }}
+                type="primary"
+              >
+                {" "}
+                Search{" "}
+              </Button>
+              <Button
+                onClick={() => {
+                  clearFilters();
+                  confirm();
+                }}
+                type="danger"
+              >
+                {" "}
+                Reset{" "}
+              </Button>
+            </div>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.question.toLowerCase().includes(value.toLowerCase());
+      },
     },
     {
       title: "Answer 1",
@@ -230,7 +277,7 @@ function AdminQuestionPage() {
   ];
 
   return (
-    <div>
+    <div className="background-div">
       <ClipLoader color={color} loading={loading} css={override} />
       <div className="total">
         <h3>Total Questions: {total}</h3>
@@ -244,7 +291,7 @@ function AdminQuestionPage() {
         dataSource={dataSource}
         columns={columns}
         pagination={true}
-        key={uniqueKey}
+        rowKey={uniqueKey}
       >
         {" "}
       </Table>
@@ -462,27 +509,14 @@ function AdminQuestionPage() {
             rules={[
               {
                 required: true,
-                message: "Please select the correct answer!",
+                message: "Please input the correct answer!",
               },
             ]}
           >
-            <Select
-              placeholder="Choose correct answer"
-              onChange={(e) => {setCorrectanswer(e)}}
-            >
-              <Select.Option value={newAnswer1} key="1">
-                {newAnswer1}
-              </Select.Option>
-              <Select.Option value={newAnswer2} key="2">
-                {newAnswer2}
-              </Select.Option>
-              <Select.Option value={newAnswer3} key="3">
-                {newAnswer3}
-              </Select.Option>
-              <Select.Option value={newAnswer4} key="4">
-                {newAnswer4}
-              </Select.Option>
-            </Select>
+            <Input
+              placeholder="Correct Answer"
+              onChange={(e) => setNewCorrectAnswer(e.target.value)}
+            />
           </Form.Item>
           <Form.Item>
             <div className="btn_list">

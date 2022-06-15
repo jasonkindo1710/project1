@@ -29,17 +29,18 @@ function AdminHomePage() {
   let [loading, setLoading] = useState(false);
   let [color, setColor] = useState("#ffffff");
 
+  const [bgColor, setBgColor] = useState("#ffffff");
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
-    setLoading(true)
+    setLoading(true);
     await logOut(refreshToken, dispatch, navigate);
   };
-  
 
   return (
     <div>
-      <ClipLoader color={color} loading={loading}  css={override} />
+      <ClipLoader color={color} loading={loading} css={override} />
       <nav className="header">
         <h1>
           Welcome <span> {user?.user.username} </span>
@@ -49,16 +50,21 @@ function AdminHomePage() {
           Log out
         </Button>
       </nav>
-      <div className="btnDiv">
-        <Button className="btn_manage">
-          <Link to="adminuser">Users</Link>
-        </Button>
-        <Button className="btn_manage">
-          <Link to="adminquestion">Questions</Link>
-        </Button>
+      <div className="background" >
+        <div className="btnDiv" >
+          <Button className="btn_manage">
+            <Link to="adminuser">Users</Link>
+          </Button>
+          <Button className="btn_manage">
+            <Link to="adminquestion">Questions</Link>
+          </Button>
+        </div>
       </div>
       <Outlet />
+      <div className="addon">
+      </div>
     </div>
+    
   );
 }
 

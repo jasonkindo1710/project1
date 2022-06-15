@@ -15,6 +15,7 @@ import PageNotFound from "./RouteGuard/PageNotFound";
 import tokenExpired from "./redux/tokenExpired";
 import { refresh } from "./redux/apiRequest";
 import { AdminRole, RedirectRole, UserRole } from "./RouteGuard/RouterGuard";
+import './App.css'
 
 function App() {
   const accessToken = useSelector(

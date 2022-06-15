@@ -11,6 +11,9 @@ import { logOut } from "../redux/apiRequest";
 import { Progress } from "antd";
 import ClipLoader from "react-spinners/ClipLoader";
 import { css } from "@emotion/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStopwatch, faListCheck } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faSadCry,  } from "@fortawesome/free-regular-svg-icons";
 
 function FinalScore() {
   const navigate = useNavigate();
@@ -22,7 +25,7 @@ function FinalScore() {
 
   const submit = useSelector((state) => state.answers.answers?.submit);
   const final = submit.filter((item) => item.result === true);
-  console.log(final)
+  console.log(final);
   dispatch(handleScoreChange(final.length));
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.access.token
@@ -30,8 +33,11 @@ function FinalScore() {
   const refreshToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.refresh.token
   );
-    //spinner
-    const override = css`
+  const avatar = useSelector(
+    (state) => state.auth.login?.currentUser?.user.avatar
+  );
+  //spinner
+  const override = css`
     position: fixed;
     left: 50%;
     top: 35%;
@@ -44,7 +50,7 @@ function FinalScore() {
   let [loading, setLoading] = useState(false);
   let [color, setColor] = useState("#ffffff");
   const handleLogout = async () => {
-    setLoading(true)
+    setLoading(true);
     await logOut(refreshToken, dispatch, navigate);
   };
 
@@ -60,50 +66,90 @@ function FinalScore() {
   };
   return (
     <div>
-    <ClipLoader color={color} loading={loading} css={override} />
+      <ClipLoader color={color} loading={loading} css={override} />
       <nav className="header">
         <h1>
           Welcome <span> {user?.username} </span>
         </h1>
+        <img src={avatar} className="avatar-user" />
         <Button type="primary" className="logout_btn" onClick={handleLogout}>
           Log out
         </Button>
       </nav>
 
-      <Form className="playscreen">
-        <Form.Item>
-        <div className="display">
-        <h1> Final Score</h1>
-          <h1>
-            You get {score} out of {amount}
-          </h1>
-          <h1>Your score is: {percent}%</h1>
-        </div>
-          
-        </Form.Item>
-        {percent < 60 ? (
+      <div className="background-div-play ">
+        <Form className="playscreen">
           <Form.Item>
-            <div className="progress">
-              <Progress type="circle" percent={percent} status="exception" style={{marginBottom: "20px"}}/>
+            <div className="display">
+              <h1> Final Score <span>
+                    <FontAwesomeIcon
+                      style={{ marginLeft: "5px", color: "green" }}
+                      icon={faListCheck}
 
-              <p>You need at least 60% to pass. Please try again</p>
-              <Button onClick={handleBackToQuiz} className="Button__Back">
-                Retry
-              </Button>
+                    ></FontAwesomeIcon>
+                  </span></h1>
+              <h1>
+                You get {score} out of {amount}
+              </h1>
+              <h1>Your score is: {percent}%</h1>
             </div>
           </Form.Item>
-        ) : (
-          <Form.Item>
-            <div className="progress">
-              <Progress type="circle" percent={100} style={{marginBottom: "20px"}}/>
-              <p>Congratulation! You have passed!</p>
-              <Button onClick={handleBackToSettings} className="Button__Back">
-                Back to Settings!
-              </Button>
-            </div>
-          </Form.Item>
-        )}
-      </Form>
+          {percent < 60 ? (
+            <Form.Item>
+              <div className="progress">
+                <Progress
+                  type="circle"
+                  percent={100}
+                  status="exception"
+                  style={{ marginBottom: "20px" }}
+                />
+                <h3>
+                  You need at least 60% to pass. Please try again!{" "}
+                  
+                  <span>
+                    <FontAwesomeIcon
+                      style={{ marginLeft: "5px" }}
+                      icon={faSadCry}
+                      beat
+                    ></FontAwesomeIcon>
+                  </span>
+                </h3>
+                <Button onClick={handleBackToQuiz} className="Button__Back">
+                  Retry
+                </Button>
+                Or
+                <Button onClick={handleBackToSettings} className="Button__Back">
+                  Back to Settings!
+                </Button>
+              </div>
+            </Form.Item>
+          ) : (
+            <Form.Item>
+              <div className="progress">
+                <Progress
+                  type="circle"
+                  percent={100}
+                  style={{ marginBottom: "20px" }}
+                />
+                <h3>
+                  Congratulation! You have passed!{" "}
+                  <span>
+                    <FontAwesomeIcon
+                      style={{ marginLeft: "5px" }}
+                      icon={faStar}
+                      bounce
+                    ></FontAwesomeIcon>
+                  </span>
+                  
+                </h3>
+                <Button onClick={handleBackToSettings} className="Button__Back">
+                  Back to Settings!
+                </Button>
+              </div>
+            </Form.Item>
+          )}
+        </Form>
+      </div>
     </div>
   );
 }

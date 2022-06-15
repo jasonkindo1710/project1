@@ -10,16 +10,24 @@ import { getAllQuestionsUser } from "../redux/apiRequest";
 import { logOut } from "../redux/apiRequest";
 import ClipLoader from "react-spinners/ClipLoader";
 import { css } from "@emotion/react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {faStopwatch } from "@fortawesome/free-solid-svg-icons"
+import {faClock} from "@fortawesome/free-regular-svg-icons"
+
+
+
 
 function PlayScreen() {
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(50);
   const user = useSelector((state) => state.auth.login.currentUser?.user);
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.access.token
   );
   const refreshToken = useSelector((state) => state.auth.login.currentUser?.tokens?.refresh.token)
-  
+  const avatar = useSelector(
+    (state) => state.auth.login?.currentUser?.user.avatar
+  );
     //spinner
     const override = css`
     position: fixed;
@@ -36,8 +44,9 @@ function PlayScreen() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
-    getAllQuestionsUser(accessToken, dispatch, page, limit);
+    getAllQuestionsUser(accessToken, dispatch);
   }, []);
+  
   const handleLogout = async () => {
     setLoading(true)
     await logOut(refreshToken, dispatch, navigate)
@@ -58,6 +67,7 @@ function PlayScreen() {
         <h1>
           Welcome <span> {user?.username} </span>
         </h1>
+        <img src={avatar} className="avatar-user" />
         <Button
           type="primary"
           className="logout_btn"
@@ -66,9 +76,10 @@ function PlayScreen() {
           Log out
         </Button>
       </nav>
+      <div className="background-div-play">
+      <Form className="playscreen" onFinish={handleFinish} >
+        <h1 className="title1-p">Quiz App <span><FontAwesomeIcon icon={faStopwatch} style={{marginLeft: '2px'}} shake  ></FontAwesomeIcon></span></h1>
 
-      <Form className="playscreen" onFinish={handleFinish}>
-        <h1>Play Screen</h1>
         <Form.Item label="Select the number of questions:" name="amount"
         rules={[
           {
@@ -77,6 +88,9 @@ function PlayScreen() {
           },
         ]}>
           <Input type="number" onChange={handleAmount}/>
+        </Form.Item>
+        <Form.Item>
+          <p className="style-p">We have up to 40 questions</p>
         </Form.Item>
         <Form.Item>
           <Button
@@ -89,6 +103,8 @@ function PlayScreen() {
           </Button>
         </Form.Item>
       </Form>
+      </div>
+      
     </div>
   );
 }

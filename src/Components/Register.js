@@ -6,8 +6,9 @@ import {LockOutlined, UserOutlined, MailOutlined} from '@ant-design/icons'
 import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../redux/apiRequest';
 import { useDispatch } from 'react-redux';
-
-
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {faUser} from "@fortawesome/free-regular-svg-icons"
+import {faSignIn } from "@fortawesome/free-solid-svg-icons"
 function Register() {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
@@ -27,7 +28,7 @@ function Register() {
   return (
     <div className="login">
       <Form className='login-form' onFinish={handleRegister}>
-        <h1>Register</h1>
+        <h1>Register <span><FontAwesomeIcon icon={faSignIn} style={{marginLeft: '2px'}}  ></FontAwesomeIcon></span></h1>
         <Form.Item label='User Name' name='username'
          rules={[
               {

@@ -13,7 +13,7 @@ import { css } from "@emotion/react";
 
 function Questions() {
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(30);
   const [options, setOptions] = useState([]);
   const [QuestionId, setId] = useState([]);
   const [disabled, setDisabled] = useState(true);
@@ -41,21 +41,24 @@ function Questions() {
   const questionAmount = useSelector(
     (state) => state.questions.questions.amount
   );
+  const avatar = useSelector(
+    (state) => state.auth.login?.currentUser?.user.avatar
+  );
 
   const user = useSelector((state) => state.auth.login.currentUser?.user);
   const accessToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens.access.token
   );
   const questionList = useSelector(
-    (state) => state.questions.questions.allQuestions.results
+    (state) => state.questions?.questions.allQuestions.results
   );
-  const score = useSelector((state) => state.score.score);
+  
 
   let [questionIndex, setQuestionIndex] = useState(0);
 
   const navigate = useNavigate();
   useEffect(() => {
-    getAllQuestionsUser(accessToken, dispatch, page, limit);
+    getAllQuestionsUser(accessToken, dispatch);
   }, []);
   const refreshToken = useSelector(
     (state) => state.auth.login.currentUser?.tokens?.refresh.token
@@ -114,9 +117,9 @@ function Questions() {
   };
   const handleSkip = () => {
     if (questionIndex + 1 < questionAmount) {
-      setQuestionIndex(questionIndex + 2);
+      setQuestionIndex(questionIndex + 1);
     }
-   if (questionIndex + 1 == questionAmount - 1){
+   if (questionIndex + 1 == questionAmount ){
      setQuestionIndex(questionIndex)
    }
   }
@@ -128,19 +131,20 @@ function Questions() {
         <h1>
           Welcome <span> {user?.username} </span>
         </h1>
+        <img src={avatar} className="avatar-user" />
         <Button type="primary" className="logout_btn" onClick={handleLogout}>
           Log out
         </Button>
       </nav>
-
-      <Form className="playscreen" onFinish={handleFinish}>
+    <div className="background-div-play ">
+    <Form className="playscreen" onFinish={handleFinish}>
         <Form.Item>
-          <h1>
+          <h1 className="title1">
             Question {questionIndex + 1} / {questionAmount}
           </h1>
         </Form.Item>
         <Form.Item>
-          <h1>{questionList[questionIndex].question}</h1>
+          <h1 className="title2">{questionList[questionIndex].question}</h1>
         </Form.Item>
         <Form.Item>
           {options.map((data, id) => (
@@ -173,6 +177,8 @@ function Questions() {
           </div>
         </Form.Item>
       </Form>
+    </div>
+      
     </div>
   );
 }

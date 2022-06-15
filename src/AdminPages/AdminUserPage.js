@@ -46,6 +46,9 @@ function AdminUserPage() {
   const userList = useSelector(
     (state) => state.users.users.allUsers.results
   );
+  console.log(userList)
+
+
   const total = userList.length;
   let accessToken = useSelector(
     (state) => state?.auth.login.currentUser?.tokens.access.token
@@ -84,7 +87,7 @@ function AdminUserPage() {
       role: role,
     };
     setLoading(true);
-    await addNewUser(user?.tokens.access.token, newUser, dispatch);
+    await addNewUser(accessToken, newUser, dispatch);
     // setIsAdding(false);
     setFlag(!flag);
   };
@@ -217,7 +220,7 @@ function AdminUserPage() {
       dataIndex: "role",
       key: "3",
       sorter: {
-        compare: (a, b) => b.role > a.role,
+        compare: (a, b) => a.role.localeCompare(b.role)
       },
     },
     {
@@ -245,7 +248,6 @@ function AdminUserPage() {
           <>
             <EditOutlined />
             <DeleteOutlined
-              onClick={() => handleDelete(user.id)}
               style={{ color: "red", marginLeft: 12 }}
             />
           </>
@@ -254,7 +256,7 @@ function AdminUserPage() {
     },
   ];
   return (
-    <div>
+    <div className="background-div">
       <ClipLoader color={color} loading={loading} css={override} />
       <div className="total">
       <h3>Total Users: {total}</h3>
@@ -269,7 +271,7 @@ function AdminUserPage() {
         dataSource={dataSource}
         columns={columns}
         pagination={true}
-        key={uniqueKey}
+        rowKey={uniqueKey}
         
       >
         {" "}

@@ -86,7 +86,10 @@ export const logOut = async (refreshToken, dispatch, navigate) => {
     dispatch(logoutSuccess(res.data));
     navigate("/");
   } catch (err) {
-    console.log(err);
+    setTimeout(() => {
+      message.error("Logout unsuccessfully. Please try again!");
+    }, 500);
+    // console.log(err);
   }
 };
 
@@ -97,9 +100,15 @@ export const registerUser = async (user, dispatch, navigate) => {
       "https://fwa-ec-quiz-mock1.herokuapp.com/v1/auth/register",
       user
     );
+    setTimeout(() => {
+      message.success("Register successfully");
+    }, 500);
     dispatch(RegisterSuccess());
     navigate("/");
   } catch (err) {
+    setTimeout(() => {
+      message.error("Register unsuccessfully. Please try again!");
+    }, 500);
     dispatch(RegisterFailed());
   }
 };
@@ -157,8 +166,12 @@ export const addNewUser = async (accessToken, user, dispatch) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
+    setTimeout(() => {
+      message.success("User has been added successfully!");
+    }, 500);
     dispatch(addUsersSuccess(res.data));
   } catch (err) {
+    message.error("User has been added unsuccessfully! Please Try Again!");
     dispatch(addUsersFailed());
   }
 };
@@ -188,8 +201,12 @@ export const addNewQuestion = async (accessToken, question, dispatch) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
+    setTimeout(() => {
+      message.success("Question has been added successfully!");
+    }, 500);
     dispatch(addQuestionsSuccess(res.data));
   } catch (err) {
+    message.error("Question has been added unsuccessfully! Please Try Again!");
     dispatch(addQuestionsFailed());
   }
 };
@@ -202,8 +219,14 @@ export const deleteQuestion = async (accessToken, dispatch, id) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
+    setTimeout(() => {
+      message.success("Question has been deleted successfully!");
+    }, 500);
     dispatch(deleteQuestionSuccess(res.data));
   } catch (err) {
+    setTimeout(() => {
+      message.error("Question has been deleted unsuccessfully!");
+    }, 500);
     dispatch(deleteQuestionFailed());
   }
 };
@@ -217,8 +240,14 @@ export const updateQuestion = async (accessToken, question, dispatch, id) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
+    setTimeout(() => {
+      message.success("Question has been updated successfully!");
+    }, 500);
     dispatch(updateQuestionSuccess(res.data));
   } catch (err) {
+    setTimeout(() => {
+      message.error("Question has been updated successfully!");
+    }, 500);
     dispatch(updateQuestionFailed());
   }
 };
@@ -239,14 +268,12 @@ export const getQuestion = async (accessToken, dispatch, id) => {
 //User
 export const getAllQuestionsUser = async (
   accessToken,
-  dispatch,
-  page,
-  limit
+  dispatch
 ) => {
   dispatch(getQuestionsStart());
   try {
     const res = await axios.get(
-      `https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions?page=${page}&limit=${limit}`,
+      `https://fwa-ec-quiz-mock1.herokuapp.com/v1/questions?limit=50`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
       }

@@ -1,3 +1,4 @@
+
 .header{
     display: flex;
     border-bottom: 1px solid #d3d3d3;
@@ -7,6 +8,7 @@
 .table {
     margin: auto;
     max-width: 95%;
+    border: 1px solid beige;
 }
 .btn_add{
     display: block;
@@ -19,7 +21,7 @@
 }
 
 .btnDiv{
-    margin: auto 70px;
+    margin: 0 70px;
 }
 
 .avatar {
@@ -61,4 +63,17 @@
 .total Button {
   margin-right: 10%;
   margin-bottom: 10px;
+}
+.background {
+    background-color: #F6F6F6;
+}
+.addon{
+    height: 700px;
+    background-color: #F6F6F6;
+}
+.background-div {
+    background-color: #F6F6F6;
+    max-height: 200px;
+    width: 100%;
+    margin-top: -20px;
 }

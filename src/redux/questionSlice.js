@@ -4,10 +4,10 @@ const questionSlice = createSlice({
   name: "question",
   initialState: {
     questions: {
-      allQuestions: null,
-      question: null,
+      allQuestions: [],
+      question: [],
       score: 0,
-      amount: 10,
+      amount: 100,
       isFetching: false,
       error: false,
       success: false,
